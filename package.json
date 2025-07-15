@@ -1,0 +1,38 @@
+{
+  "name": "split-bill",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saabet/split-bill.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/saabet/split-bill/issues"
+  },
+  "homepage": "https://github.com/saabet/split-bill#readme",
+  "dependencies": {
+    "@hapi/hapi": "^21.4.0",
+    "dotenv": "^17.2.0",
+    "joi": "^17.13.3",
+    "pdfkit": "^0.17.1",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^5.5.1",
+    "prettier": "^3.6.2"
+  }
+}
