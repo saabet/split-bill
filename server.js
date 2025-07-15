@@ -1,6 +1,7 @@
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const itemRoutes = require('./routes/itemRoutes');
+const billRoutes = require('./routes/billRoutes');
 const { initDB } = require('./services/db');
 
 const init = async () => {
@@ -16,7 +17,7 @@ const init = async () => {
     },
   });
 
-  server.route(itemRoutes);
+  server.route([...itemRoutes, ...billRoutes]);
 
   await server.start();
   console.log(`Server running at: ${server.info.uri}`);
