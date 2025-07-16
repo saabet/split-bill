@@ -7,6 +7,11 @@ module.exports = [
     handler: billController.startBill,
   },
   {
+    method: 'GET',
+    path: '/bills/{billId}/split',
+    handler: billController.splitBill,
+  },
+  {
     method: 'POST',
     path: '/bills/finish',
     handler: billController.finishBill,
