@@ -3,7 +3,7 @@ const itemController = require('../controllers/itemController');
 module.exports = [
   {
     method: 'POST',
-    path: '/items',
+    path: '/bills/{billId}/items',
     handler: itemController.addItem,
   },
   {
