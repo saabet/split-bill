@@ -8,20 +8,20 @@ const itemSchema = Joi.object({
   price: Joi.number().positive().required(),
   discount: Joi.number().min(0).default(0),
   belongsTo: Joi.string().allow('', null),
-  billId: Joi.string().optional(),
 });
 
 const addItem = async (request, h) => {
   try {
+    const { billId } = request.params;
     const { error, value } = itemSchema.validate(request.payload);
     if (error) return h.response({ error: error.details[0].message }).code(400);
 
-    const { name, quantity, price, discount, billId, belongsTo } = value;
+    const { name, quantity, price, discount, belongsTo } = value;
     const id = uuidv4();
 
     await new Promise((resolve, reject) => {
       db.run(
-        `INSERT INTO items (id, name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO items (id, name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [id, name, quantity, price, discount, belongsTo || null, billId],
         function (err) {
           if (err) reject(err);
