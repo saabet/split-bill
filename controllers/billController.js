@@ -13,6 +13,35 @@ const startBill = async (_request, h) => {
   });
 };
 
+const splitBill = async (request, h) => {
+    const { billId } = request.params;
+
+    const items = await db.all(`SELECT * FROM items WHERE billId = ?`, [billId]);
+
+    const result = {};
+
+    for (const item of items) {
+        const owner = item.belongsTo || 'Unassigned';
+        const total = item.quantity * item.price - item.discount;
+
+        if (!result[owner]) {
+            result[owner] = {
+                items: [],
+                total: 0,
+            };
+        }
+
+        result[owner].items.push({
+            name: item.nmae,
+            total,
+        });
+
+        result[owner].total += total;
+    }
+
+    return h.response(result);
+};
+
 const finishBill = async (request, h) => {
   const { billId } = request.payload;
 
@@ -38,4 +67,4 @@ const getItemsByBill = async (request, h) => {
   });
 };
 
-module.exports = { startBill, finishBill, getItemsByBill };
+module.exports = { startBill, splitBill, finishBill, getItemsByBill };
