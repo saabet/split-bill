@@ -11,7 +11,7 @@ async function initDB() {
                 quantity INTEGER,
                 price REAL,
                 discount REAL,
-                belongsTo REAL,
+                belongsTo TEXT,
                 billId TEXT
             )
         `);
