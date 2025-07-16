@@ -6,7 +6,8 @@ const itemSchema = Joi.object({
   name: Joi.string().required(),
   quantity: Joi.number().min(1).required(),
   price: Joi.number().positive().required(),
-  discount: Joi.number().min(0).max(100).default(0),
+  discount: Joi.number().min(0).default(0),
+  belongsTo: Joi.string().allow('', null),
   billId: Joi.string().optional(),
 });
 
