@@ -21,7 +21,7 @@ const addItem = async (request, h) => {
 
     await new Promise((resolve, reject) => {
       db.run(
-        `INSERT INTO items (id, name, quantity, price, discount, billId) VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO items (id, name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?)`,
         [id, name, quantity, price, discount, belongsTo || null, billId],
         function (err) {
           if (err) reject(err);
