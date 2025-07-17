@@ -16,7 +16,14 @@ const startBill = async (_request, h) => {
 const splitBill = async (request, h) => {
     const { billId } = request.params;
 
-    const items = await db.all(`SELECT * FROM items WHERE billId = ?`, [billId]);
+    const query = `SELECT belongsTo, name, quantity, price, discount FROM items WHERE billId = ? ORDER BY belongsTo`;
+
+    const items = await new Promise((resolve, reject) => {
+        db.all(query, [billId], (err, rows) => {
+            if (err) return reject(err);
+            resolve(rows);
+        });
+    });
 
     const result = {};
 
@@ -31,15 +38,12 @@ const splitBill = async (request, h) => {
             };
         }
 
-        result[owner].items.push({
-            name: item.nmae,
-            total,
-        });
-
+        const { name, quantity, price, discount } = item;
+        result[owner].items.push({ name, quantity, price, discount });
         result[owner].total += total;
     }
 
-    return h.response(result);
+    return h.response({ billId, split: result });
 };
 
 const finishBill = async (request, h) => {
