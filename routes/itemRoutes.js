@@ -1,4 +1,5 @@
 const itemController = require('../controllers/itemController');
+const { generatePDF } = require('../controllers/pdfController');
 
 module.exports = [
   {
@@ -10,5 +11,10 @@ module.exports = [
     method: 'GET',
     path: '/items',
     handler: itemController.getItems,
+  },
+  {
+    method: 'GET',
+    path: '/bills/{billId}/export',
+    handler: generatePDF,
   },
 ];
