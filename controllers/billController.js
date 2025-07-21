@@ -14,36 +14,36 @@ const startBill = async (_request, h) => {
 };
 
 const splitBill = async (request, h) => {
-    const { billId } = request.params;
+  const { billId } = request.params;
 
-    const query = `SELECT belongsTo, name, quantity, price, discount FROM items WHERE billId = ? ORDER BY belongsTo`;
+  const query = `SELECT belongsTo, name, quantity, price, discount FROM items WHERE billId = ? ORDER BY belongsTo`;
 
-    const items = await new Promise((resolve, reject) => {
-        db.all(query, [billId], (err, rows) => {
-            if (err) return reject(err);
-            resolve(rows);
-        });
+  const items = await new Promise((resolve, reject) => {
+    db.all(query, [billId], (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows);
     });
+  });
 
-    const result = {};
+  const result = {};
 
-    for (const item of items) {
-        const owner = item.belongsTo || 'Unassigned';
-        const total = item.quantity * item.price - item.discount;
+  for (const item of items) {
+    const owner = item.belongsTo || 'Unassigned';
+    const total = item.quantity * item.price - item.discount;
 
-        if (!result[owner]) {
-            result[owner] = {
-                items: [],
-                total: 0,
-            };
-        }
-
-        const { name, quantity, price, discount } = item;
-        result[owner].items.push({ name, quantity, price, discount });
-        result[owner].total += total;
+    if (!result[owner]) {
+      result[owner] = {
+        items: [],
+        total: 0,
+      };
     }
 
-    return h.response({ billId, split: result });
+    const { name, quantity, price, discount } = item;
+    result[owner].items.push({ name, quantity, price, discount });
+    result[owner].total += total;
+  }
+
+  return h.response({ billId, split: result });
 };
 
 const finishBill = async (request, h) => {
