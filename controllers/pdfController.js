@@ -1,7 +1,7 @@
 const PDFDocument = require('pdfkit');
-const { db } = require('../services/db');
 const fs = require('fs');
 const path = require('path');
+const { db } = require('../services/db');
 
 const generatePDF = async (request, h) => {
   const { billId } = request.params;
@@ -36,15 +36,30 @@ const generatePDF = async (request, h) => {
   doc.fontSize(18).text(`Bill ID: ${billId}\n\n`);
 
   for (const [owner, data] of Object.entries(grouped)) {
-    doc.fontSize(14).text(`Nama: ${owner}`);
-    doc.fontSize(12);
+    doc
+      .font('Courier')
+      .fontSize(10)
+      .text(`Struk belanja - ${billId}\n\n`, { width: 250, align: 'center' });
+    doc.text(`Nama: ${owner}\n\n${`-`.repeat(40)}`).moveDown(0.5);
 
     data.items.forEach((item) => {
-      const subtotal = item.quantity * item.price - item.discount;
-      doc.text(`- ${item.name} ×${item.quantity} @${item.price} - ${item.discount} = ${subtotal}`);
+      const name = item.name.padEnd(17);
+      const quantity = String(item.quantity).padStart(5);
+      const unitPrice = item.price.toLocaleString('id-ID').padStart(9);
+      const totalPrice = (item.quantity * item.price).toLocaleString('id-ID').padStart(9);
+      doc.text(`${name}${quantity}${unitPrice}${totalPrice}`).moveDown(0.5);
+
+      if (item.discount > 0) {
+        const discount = `-${item.discount.toLocaleString('id-ID')}`;
+        doc.text(`Hemat`.padEnd(40 - discount.length) + discount).moveDown(0.5);
+      }
     });
 
-    doc.text(`Total: ${data.total}\n`, { underline: true });
+    doc.text(
+      `${`-`.repeat(40)}\n${`Total`.padEnd(
+        40 - data.total.toLocaleString('id-ID').length
+      )}${data.total.toLocaleString('id-ID')}`
+    );
   }
 
   doc.end();
