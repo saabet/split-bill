@@ -3,7 +3,7 @@ const { db } = require('../services/db');
 
 const itemSchema = Joi.object({
   name: Joi.string().required(),
-  quantity: Joi.number().min(1).required(),
+  quantity: Joi.number().min(0).required(),
   price: Joi.number().positive().required(),
   discount: Joi.number().min(0).default(0),
   belongsTo: Joi.string().allow('', null),
@@ -43,4 +43,15 @@ const getItems = async (_request, h) => {
   });
 };
 
-module.exports = { addItem, getItems };
+const deleteItemsbyBillId = async(request, h) => {
+    const { billId } = request.params;
+
+    return new Promise((resolve, reject) => {
+        db.run(`DELETE FROM items WHERE billId = ?`, [billId], (err) => {
+            if (err) return reject(err);
+            resolve(h.response({ message: `Deleted: ${this.changes} items from bill ${billId}` }).code(200));
+        });
+    });
+};
+
+module.exports = { addItem, getItems, deleteItemsbyBillId };
