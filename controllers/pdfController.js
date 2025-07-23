@@ -31,12 +31,25 @@ const generatePDF = async (request, h) => {
   if (!fs.existsSync(exportPath)) fs.mkdirSync(exportPath);
 
   const filePath = path.join(exportPath, `bill-${billId}.pdf`);
-  const doc = new PDFDocument({ size: [299, 935.43], margins: { top: 40, bottom: 40, left: 14.17, right: 14.17 }});
+  // const doc = new PDFDocument({ size: [299, 935.43], margins: { top: 40, bottom: 40, left: 14.17, right: 14.17 }});
+  const doc = new PDFDocument({ autoFirstPage: false });
   const stream = fs.createWriteStream(filePath);
   doc.pipe(stream);
 
-  let index = 0;
+  const width = 299;
+  const baseHeight = 100;
+  const rowHeight = 17;
+  // let index = 0;
   for (const [owner, data] of Object.entries(grouped)) {
+    const discountLines = data.items.filter(i => i.discount > 0).length;
+    const totalLines = data.items.length + discountLines + 2;
+    const height = baseHeight + totalLines * rowHeight;
+
+    doc.addPage({
+      size: [width, height],
+      margins: { top: 40, bottom: 20, left: 14.17, right: 14.17 },
+    });
+
     doc
       .font('Courier')
       .fontSize(10)
@@ -62,8 +75,8 @@ const generatePDF = async (request, h) => {
       )}${data.total.toLocaleString('id-ID')}`
     );
 
-    index += 1;
-    if (index < Object.entries(grouped).length) doc.addPage();
+    // index += 1;
+    // if (index < Object.entries(grouped).length) doc.addPage();
   }
 
   doc.end();
