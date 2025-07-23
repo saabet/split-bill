@@ -17,4 +17,9 @@ module.exports = [
     path: '/bills/{billId}/export',
     handler: generatePDF,
   },
+  {
+    method: 'DELETE',
+    path: '/items/bill/{billId}',
+    handler: itemController.deleteItemsbyBillId,
+  },
 ];
