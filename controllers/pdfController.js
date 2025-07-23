@@ -16,6 +16,8 @@ const generatePDF = async (request, h) => {
 
   const grouped = {};
   for (const item of items) {
+    if (item.quantity === 0) continue;
+
     const owner = item.belongsTo || 'Unassigned';
     const total = item.quantity * item.price - item.discount;
 
