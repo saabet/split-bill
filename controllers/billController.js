@@ -15,35 +15,74 @@ const startBill = async (_request, h) => {
 
 const splitBill = async (request, h) => {
   const { billId } = request.params;
+  const splitData = request.payload;
 
-  const query = `SELECT belongsTo, name, quantity, price, discount FROM items WHERE billId = ? ORDER BY belongsTo`;
+  for (const owner of splitData) {
+    const { name, items } = owner;
 
-  const items = await new Promise((resolve, reject) => {
-    db.all(query, [billId], (err, rows) => {
-      if (err) return reject(err);
-      resolve(rows);
-    });
-  });
+    for (const item of items) {
+      const { id, quantity } = item;
 
-  const result = {};
+      const originalItem = await new Promise((resolve, reject) => {
+        db.get(`SELECT * FROM items WHERE id = ? AND billId = ?`, [id, billId], (err, row) => {
+          if (err) return reject(err);
+          resolve(row);
+        });
+      });
 
-  for (const item of items) {
-    const owner = item.belongsTo || 'Unassigned';
-    const total = item.quantity * item.price - item.discount;
+      if (!originalItem) {
+        return h.response({ error: `Item with id ${id} not found in this bill.` }).code(404);
+      }
 
-    if (!result[owner]) {
-      result[owner] = {
-        items: [],
-        total: 0,
-      };
+      if (quantity === originalItem.quantity && originalItem.belongsTo === '') {
+        await new Promise((resolve, reject) => {
+          db.run(
+            `UPDATE items SET belongsTo = ? WHERE id = ? AND billId = ?`,
+            [name, id, billId],
+            (err) => {
+              if (err) return reject(err);
+              resolve();
+            }
+          );
+        });
+      } else {
+        const remaining = originalItem.quantity - quantity;
+        const unitDiscount = originalItem.discount / originalItem.quantity;
+        const remainingDiscount = unitDiscount * remaining;
+        const subtotalDiscount = unitDiscount * quantity;
+
+        if (remaining < 0) {
+          return h
+            .response({ error: `Quantity for item ${id} exceeds original quantity.` })
+            .code(400);
+        }
+
+        await new Promise((resolve, reject) => {
+          db.run(
+            `UPDATE items SET quantity = ?, discount = ? WHERE id = ? AND billId = ?`,
+            [remaining, remainingDiscount, id, billId],
+            (err) => {
+              if (err) return reject(err);
+              resolve();
+            }
+          );
+        });
+
+        await new Promise((resolve, reject) => {
+          db.run(
+            `INSERT INTO items (name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?)`,
+            [originalItem.name, quantity, originalItem.price, subtotalDiscount, name, billId],
+            (err) => {
+              if (err) return reject(err);
+              resolve();
+            }
+          );
+        });
+      }
     }
-
-    const { name, quantity, price, discount } = item;
-    result[owner].items.push({ name, quantity, price, discount });
-    result[owner].total += total;
   }
 
-  return h.response({ billId, split: result });
+  return h.response({ message: 'Split bill successful' }).code(200);
 };
 
 const finishBill = async (request, h) => {
