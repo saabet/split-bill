@@ -38,10 +38,9 @@ const generatePDF = async (request, h) => {
   const width = 299;
   const baseHeight = 100;
   const rowHeight = 17;
-  // let index = 0;
   for (const [owner, data] of Object.entries(grouped)) {
     const discountLines = data.items.filter(i => i.discount > 0).length;
-    const totalLines = data.items.length + discountLines + 2;
+    const totalLines = data.items.length + discountLines + 4;
     const height = baseHeight + totalLines * rowHeight;
 
     doc.addPage({
