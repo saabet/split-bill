@@ -31,7 +31,6 @@ const generatePDF = async (request, h) => {
   if (!fs.existsSync(exportPath)) fs.mkdirSync(exportPath);
 
   const filePath = path.join(exportPath, `bill-${billId}.pdf`);
-  // const doc = new PDFDocument({ size: [299, 935.43], margins: { top: 40, bottom: 40, left: 14.17, right: 14.17 }});
   const doc = new PDFDocument({ autoFirstPage: false });
   const stream = fs.createWriteStream(filePath);
   doc.pipe(stream);
@@ -74,9 +73,6 @@ const generatePDF = async (request, h) => {
         45 - data.total.toLocaleString('id-ID').length
       )}${data.total.toLocaleString('id-ID')}`
     );
-
-    // index += 1;
-    // if (index < Object.entries(grouped).length) doc.addPage();
   }
 
   doc.end();
