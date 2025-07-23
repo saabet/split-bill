@@ -8,7 +8,7 @@ async function initDB() {
             CREATE TABLE IF NOT EXISTS items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
-                quantity INTEGER,
+                quantity REAL,
                 price REAL,
                 discount REAL,
                 belongsTo TEXT,

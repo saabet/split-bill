@@ -46,10 +46,12 @@ const splitBill = async (request, h) => {
           );
         });
       } else {
-        const remaining = originalItem.quantity - quantity;
-        const unitDiscount = originalItem.discount / originalItem.quantity;
-        const remainingDiscount = unitDiscount * remaining;
-        const subtotalDiscount = unitDiscount * quantity;
+        const originalQty = parseFloat(originalItem.quantity);
+        const requestedQty = parseFloat(quantity);
+        const remaining = parseFloat(originalQty - requestedQty).toFixed(2);
+        const unitDiscount = parseFloat((originalItem.discount / originalQty).toFixed(2)); //originalItem.discount / originalItem.quantity;
+        const remainingDiscount = parseFloat((unitDiscount * remaining).toFixed(2));//unitDiscount * remaining;
+        const subtotalDiscount = parseFloat((unitDiscount * requestedQty).toFixed(2));//unitDiscount * quantity;
 
         if (remaining < 0) {
           return h
