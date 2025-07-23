@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
 const Joi = require('joi');
 const { db } = require('../services/db');
 
@@ -17,12 +16,11 @@ const addItem = async (request, h) => {
     if (error) return h.response({ error: error.details[0].message }).code(400);
 
     const { name, quantity, price, discount, belongsTo } = value;
-    const id = uuidv4();
 
     await new Promise((resolve, reject) => {
       db.run(
-        `INSERT INTO items (id, name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [id, name, quantity, price, discount, belongsTo || null, billId],
+        `INSERT INTO items (name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?)`,
+        [name, quantity, price, discount, belongsTo || null, billId],
         function (err) {
           if (err) reject(err);
           else resolve();
@@ -30,7 +28,7 @@ const addItem = async (request, h) => {
       );
     });
 
-    return h.response({ message: 'Item added', id }).code(201);
+    return h.response({ message: 'Item added' }).code(201);
   } catch (err) {
     return h.response({ error: 'Internal Server Error' }).code(500);
   }

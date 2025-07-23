@@ -6,7 +6,7 @@ async function initDB() {
   db.serialize(() => {
     db.run(`
             CREATE TABLE IF NOT EXISTS items (
-                id TEXT PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
                 quantity INTEGER,
                 price REAL,
