@@ -33,8 +33,7 @@ const generatePDF = async (request, h) => {
   const stream = fs.createWriteStream(filePath);
   doc.pipe(stream);
 
-  doc.fontSize(18).text(`Bill ID: ${billId}\n\n`);
-
+  let index = 0;
   for (const [owner, data] of Object.entries(grouped)) {
     doc
       .font('Courier')
@@ -60,13 +59,14 @@ const generatePDF = async (request, h) => {
         40 - data.total.toLocaleString('id-ID').length
       )}${data.total.toLocaleString('id-ID')}`
     );
+
+    index += 1;
+    if (index < Object.entries(grouped).length) doc.addPage();
   }
 
   doc.end();
 
-  return h
-    .response({ message: `PDF saved to ${filePath}` })
-    .code(200);
+  return h.response({ message: `PDF saved to ${filePath}` }).code(200);
 };
 
 module.exports = { generatePDF };
