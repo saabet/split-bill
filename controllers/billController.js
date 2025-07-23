@@ -49,9 +49,9 @@ const splitBill = async (request, h) => {
         const originalQty = parseFloat(originalItem.quantity);
         const requestedQty = parseFloat(quantity);
         const remaining = parseFloat(originalQty - requestedQty).toFixed(2);
-        const unitDiscount = parseFloat((originalItem.discount / originalQty).toFixed(2)); //originalItem.discount / originalItem.quantity;
-        const remainingDiscount = parseFloat((unitDiscount * remaining).toFixed(2));//unitDiscount * remaining;
-        const subtotalDiscount = parseFloat((unitDiscount * requestedQty).toFixed(2));//unitDiscount * quantity;
+        const unitDiscount = parseFloat((originalItem.discount / originalQty).toFixed(2));
+        const remainingDiscount = parseFloat((unitDiscount * remaining).toFixed(2));
+        const subtotalDiscount = parseFloat((unitDiscount * requestedQty).toFixed(2));
 
         if (remaining < 0) {
           return h
