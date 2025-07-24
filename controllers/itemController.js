@@ -39,7 +39,7 @@ const getItems = async (_request, h) => {
   return new Promise((resolve) => {
     db.all(`SELECT * FROM items`, (err, rows) => {
       if (err) resolve(h.response({ error: 'Failed to retrieve items' }).code(500));
-      else resolve(h.response(rows));
+      else resolve(h.response(rows).code(200));
     });
   });
 };
