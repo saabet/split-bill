@@ -30,6 +30,6 @@ module.exports = [
   {
     method: 'DELETE',
     path: '/items/bill/{billId}',
-    handler: itemController.deleteItemsbyBillId,
+    handler: itemController.deleteBill,
   },
 ];
