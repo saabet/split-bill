@@ -43,15 +43,17 @@ const getItems = async (_request, h) => {
   });
 };
 
-const deleteItemsbyBillId = async(request, h) => {
-    const { billId } = request.params;
+const deleteItemsbyBillId = async (request, h) => {
+  const { billId } = request.params;
 
-    return new Promise((resolve, reject) => {
-        db.run(`DELETE FROM items WHERE billId = ?`, [billId], (err) => {
-            if (err) return reject(err);
-            resolve(h.response({ message: `Deleted: ${this.changes} items from bill ${billId}` }).code(200));
-        });
+  return new Promise((resolve, reject) => {
+    db.run(`DELETE FROM items WHERE billId = ?`, [billId], (err) => {
+      if (err) return reject(err);
+      resolve(
+        h.response({ message: `Deleted: ${this.changes} items from bill ${billId}` }).code(200)
+      );
     });
+  });
 };
 
 module.exports = { addItem, getItems, deleteItemsbyBillId };
