@@ -23,6 +23,11 @@ module.exports = [
     handler: generatePDF,
   },
   {
+    method: 'PUT',
+    path: '/bills/{billId}/items',
+    handler: itemController.updateItem,
+  },
+  {
     method: 'DELETE',
     path: '/items/bill/{billId}',
     handler: itemController.deleteItemsbyBillId,
