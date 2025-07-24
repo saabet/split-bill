@@ -77,8 +77,12 @@ const generatePDF = async (request, h) => {
         align: 'center',
       })
       .moveDown(1);
-    doc.text(`${billInfo.storeName}`.padEnd((useId ? 50 : 45) - formatedDate.length) + formatedDate).moveDown(1);
-    doc.text(`${`-`.repeat(useId ? 50 : 45)}\nBelongs to: ${owner}\n${`-`.repeat(useId ? 50 : 45)}`).moveDown(0.5);
+    doc
+      .text(`${billInfo.storeName}`.padEnd((useId ? 50 : 45) - formatedDate.length) + formatedDate)
+      .moveDown(1);
+    doc
+      .text(`${`-`.repeat(useId ? 50 : 45)}\nBelongs to: ${owner}\n${`-`.repeat(useId ? 50 : 45)}`)
+      .moveDown(0.5);
 
     data.items.forEach((item) => {
       const id = String(item.id).padEnd(5);
@@ -86,19 +90,25 @@ const generatePDF = async (request, h) => {
       const quantity = String(item.quantity).padStart(7);
       const unitPrice = item.price.toLocaleString('id-ID').padStart(9);
       const totalPrice = (item.quantity * item.price).toLocaleString('id-ID').padStart(12);
-      
-      doc.text(`${useId ? id: ``}${name}${quantity}${unitPrice}${totalPrice}`).moveDown(0.5);
+
+      doc.text(`${useId ? id : ``}${name}${quantity}${unitPrice}${totalPrice}`).moveDown(0.5);
 
       if (item.discount > 0) {
         const discount = `-${item.discount.toLocaleString('id-ID')}`;
-        doc.text(`Hemat`.padStart(useId ? 10 : 0).padEnd((useId ? 50 : 45) - discount.length) + discount).moveDown(0.5);
+        doc
+          .text(
+            `Hemat`.padStart(useId ? 10 : 0).padEnd((useId ? 50 : 45) - discount.length) + discount
+          )
+          .moveDown(0.5);
       }
     });
 
     doc.text(
-      `${`-`.repeat(useId ? 50 : 45)}\n${`Total`.padStart(useId ? 10 : 0).padEnd(
-        (useId ? 50 : 45)  - data.total.toLocaleString('id-ID').length
-      )}${data.total.toLocaleString('id-ID')}`
+      `${`-`.repeat(useId ? 50 : 45)}\n${`Total`
+        .padStart(useId ? 10 : 0)
+        .padEnd(
+          (useId ? 50 : 45) - data.total.toLocaleString('id-ID').length
+        )}${data.total.toLocaleString('id-ID')}`
     );
   }
 
