@@ -19,6 +19,8 @@ async function initDB() {
     db.run(`
             CREATE TABLE IF NOT EXISTS bills (
                 id TEXT PRIMARY KEY,
+                storeName TEXT NOT NULL,
+                purchaseDate TEXT NOT NULL,
                 status TEXT DEFAULT 'in_progress',
                 createdAt TEXT
             ) 
