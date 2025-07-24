@@ -7,7 +7,7 @@ const generatePDF = async (request, h) => {
   const { billId } = request.params;
 
   const items = await new Promise((resolve, reject) => {
-    const query = `SELECT belongsTo, name, quantity, price, discount FROM items WHERE billId = ? ORDER BY belongsTo`;
+    const query = `SELECT id, belongsTo, name, quantity, price, discount FROM items WHERE billId = ? ORDER BY belongsTo`;
     db.all(query, [billId], (err, rows) => {
       if (err) return reject(err);
       return resolve(rows);
@@ -43,7 +43,9 @@ const generatePDF = async (request, h) => {
   const stream = fs.createWriteStream(filePath);
   doc.pipe(stream);
 
-  const width = 299;
+  const useId = false;
+
+  const width = useId ? 330 : 299;
   const baseHeight = 100;
   const rowHeight = 17;
   for (const [owner, data] of Object.entries(grouped)) {
@@ -71,29 +73,31 @@ const generatePDF = async (request, h) => {
       .font('Courier')
       .fontSize(10)
       .text(`Split Bill - ${billId}`, {
-        width: 270,
+        width: useId ? 300 : 270,
         align: 'center',
       })
       .moveDown(1);
-    doc.text(`${billInfo.storeName}`.padEnd(45 - formatedDate.length) + formatedDate).moveDown(1);
-    doc.text(`${`-`.repeat(45)}\nBelongs to: ${owner}\n${`-`.repeat(45)}`).moveDown(0.5);
+    doc.text(`${billInfo.storeName}`.padEnd((useId ? 50 : 45) - formatedDate.length) + formatedDate).moveDown(1);
+    doc.text(`${`-`.repeat(useId ? 50 : 45)}\nBelongs to: ${owner}\n${`-`.repeat(useId ? 50 : 45)}`).moveDown(0.5);
 
     data.items.forEach((item) => {
+      const id = String(item.id).padEnd(5);
       const name = item.name.padEnd(17);
       const quantity = String(item.quantity).padStart(7);
       const unitPrice = item.price.toLocaleString('id-ID').padStart(9);
       const totalPrice = (item.quantity * item.price).toLocaleString('id-ID').padStart(12);
-      doc.text(`${name}${quantity}${unitPrice}${totalPrice}`).moveDown(0.5);
+      
+      doc.text(`${useId ? id: ``}${name}${quantity}${unitPrice}${totalPrice}`).moveDown(0.5);
 
       if (item.discount > 0) {
         const discount = `-${item.discount.toLocaleString('id-ID')}`;
-        doc.text(`Hemat`.padEnd(45 - discount.length) + discount).moveDown(0.5);
+        doc.text(`Hemat`.padStart(useId ? 10 : 0).padEnd((useId ? 50 : 45) - discount.length) + discount).moveDown(0.5);
       }
     });
 
     doc.text(
-      `${`-`.repeat(45)}\n${`Total`.padEnd(
-        45 - data.total.toLocaleString('id-ID').length
+      `${`-`.repeat(useId ? 50 : 45)}\n${`Total`.padStart(useId ? 10 : 0).padEnd(
+        (useId ? 50 : 45)  - data.total.toLocaleString('id-ID').length
       )}${data.total.toLocaleString('id-ID')}`
     );
   }
