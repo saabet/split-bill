@@ -54,13 +54,13 @@ const getBills = async (_request, h) => {
 };
 
 const updateItem = async (request, h) => {
-  const { billid } = request.params;
+  const { billId } = request.params;
   const { id, name, quantity, price, discount } = request.payload;
 
   return new Promise((resolve, reject) => {
     const query = `UPDATE items SET name = ?, quantity = ?, price = ?, discount = ? WHERE id = ? AND billId = ?`;
 
-    db.run(query, [name, quantity, price, discount, id, billid], (err) => {
+    db.run(query, [name, quantity, price, discount, id, billId], function (err) {
       if (err) reject(h.response({ error: 'Failed to update item' }).code(500));
       else if (this.changes === 0) resolve(h.response({ message: 'Item not found' }).code(404));
       else resolve(h.response({ message: 'Item updated successfully' }).code(200));
