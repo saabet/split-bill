@@ -1,15 +1,20 @@
 const { v4: uuidv4 } = require('uuid');
 const { db } = require('../services/db');
 
-const startBill = async (_request, h) => {
+const startBill = async (request, h) => {
   const billId = uuidv4();
   const createdAt = new Date().toISOString();
+  const { storeName, purchaseDate } = request.payload;
 
   return new Promise((resolve, reject) => {
-    db.run(`INSERT INTO bills (id, createdAt) VALUES (?, ?)`, [billId, createdAt], (err) => {
-      if (err) reject(h.response({ error: 'Failed to start bill' }).code(500));
-      else resolve(h.response({ billId }).code(201));
-    });
+    db.run(
+      `INSERT INTO bills (id, storeName, purchaseDate, createdAt) VALUES (?, ?, ?, ?)`,
+      [billId, storeName, purchaseDate, createdAt],
+      (err) => {
+        if (err) reject(h.response({ error: 'Failed to start bill' }).code(500));
+        else resolve(h.response({ billId }).code(201));
+      }
+    );
   });
 };
 
