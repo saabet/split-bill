@@ -14,6 +14,14 @@ const generatePDF = async (request, h) => {
     });
   });
 
+  const billInfo = await new Promise((resolve, reject) => {
+    const query = `SELECT storeName, purchaseDate FROM bills WHERE id = ?`;
+    db.get(query, [billId], (err, data) => {
+      if (err) return reject(err);
+      return resolve(data);
+    });
+  });
+
   const grouped = {};
   for (const item of items) {
     if (item.quantity === 0) continue;
@@ -39,9 +47,20 @@ const generatePDF = async (request, h) => {
   const baseHeight = 100;
   const rowHeight = 17;
   for (const [owner, data] of Object.entries(grouped)) {
-    const discountLines = data.items.filter(i => i.discount > 0).length;
+    const discountLines = data.items.filter((i) => i.discount > 0).length;
     const totalLines = data.items.length + discountLines + 4;
     const height = baseHeight + totalLines * rowHeight;
+    const formatedDate = new Date(billInfo.purchaseDate)
+      .toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+      .replace(',', '')
+      .replace('.', ':');
 
     doc.addPage({
       size: [width, height],
@@ -51,8 +70,13 @@ const generatePDF = async (request, h) => {
     doc
       .font('Courier')
       .fontSize(10)
-      .text(`Struk belanja - ${billId}\n\n`, { width: 270, align: 'center' });
-    doc.text(`Nama: ${owner}\n\n${`-`.repeat(45)}`).moveDown(0.5);
+      .text(`Split Bill - ${billId}`, {
+        width: 270,
+        align: 'center',
+      })
+      .moveDown(1);
+    doc.text(`${billInfo.storeName}`.padEnd(45 - formatedDate.length) + formatedDate).moveDown(1);
+    doc.text(`${`-`.repeat(45)}\nBelongs to: ${owner}\n${`-`.repeat(45)}`).moveDown(0.5);
 
     data.items.forEach((item) => {
       const name = item.name.padEnd(17);
