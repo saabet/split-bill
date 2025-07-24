@@ -16,11 +16,12 @@ const addItem = async (request, h) => {
     if (error) return h.response({ error: error.details[0].message }).code(400);
 
     const { name, quantity, price, discount, belongsTo } = value;
+    const truncatedName = name.substring(0,17);
 
     await new Promise((resolve, reject) => {
       db.run(
         `INSERT INTO items (name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?)`,
-        [name, quantity, price, discount, belongsTo || null, billId],
+        [truncatedName, quantity, price, discount, belongsTo || null, billId],
         function (err) {
           if (err) reject(err);
           else resolve();
