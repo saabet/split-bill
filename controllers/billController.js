@@ -39,7 +39,7 @@ const splitBill = async (request, h) => {
         return h.response({ error: `Item with id ${id} not found in this bill.` }).code(404);
       }
 
-      if (quantity === originalItem.quantity && originalItem.belongsTo === '') {
+      if (quantity === originalItem.quantity && originalItem.belongsTo === null) {
         await new Promise((resolve, reject) => {
           db.run(
             `UPDATE items SET belongsTo = ? WHERE id = ? AND billId = ?`,
