@@ -44,7 +44,14 @@ const getItems = async (_request, h) => {
   });
 };
 
-const deleteItemsbyBillId = async (request, h) => {
+const getBills = async (_request, h) => {
+    return new Promise((resolve) => {
+        db.all(`SELECT * FROM bills`, (err, rows) => {
+            if (err) resolve(h.response({ message: 'Failed to retrieve bills'}).code(500));
+            else resolve(h.response(rows).code(200));
+        });
+    });
+};
   const { billId } = request.params;
 
   return new Promise((resolve, reject) => {
