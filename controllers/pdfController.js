@@ -43,11 +43,21 @@ const generatePDF = async (request, h) => {
   const stream = fs.createWriteStream(filePath);
   doc.pipe(stream);
 
-  const useId = false;
-
-  const width = useId ? 330 : 299;
   const baseHeight = 100;
   const rowHeight = 17;
+  let paperWidth = 299;
+  let titleWidth = 270;
+  let padStart = 0;
+  let padEnd = 45;
+
+  const useId = false;
+  if (useId) {
+    paperWidth = 330;
+    titleWidth = 300;
+    padStart = 10;
+    padEnd = 50;
+  }
+
   for (const [owner, data] of Object.entries(grouped)) {
     const discountLines = data.items.filter((i) => i.discount > 0).length;
     const totalLines = data.items.length + discountLines + 4;
@@ -65,7 +75,7 @@ const generatePDF = async (request, h) => {
       .replace('.', ':');
 
     doc.addPage({
-      size: [width, height],
+      size: [paperWidth, height],
       margins: { top: 40, bottom: 20, left: 14.17, right: 14.17 },
     });
 
@@ -73,16 +83,14 @@ const generatePDF = async (request, h) => {
       .font('Courier')
       .fontSize(10)
       .text(`Split Bill - ${billId}`, {
-        width: useId ? 300 : 270,
+        width: titleWidth,
         align: 'center',
       })
       .moveDown(1);
     doc
-      .text(`${billInfo.storeName}`.padEnd((useId ? 50 : 45) - formatedDate.length) + formatedDate)
+      .text(`${billInfo.storeName}`.padEnd(padEnd - formatedDate.length) + formatedDate)
       .moveDown(1);
-    doc
-      .text(`${`-`.repeat(useId ? 50 : 45)}\nBelongs to: ${owner}\n${`-`.repeat(useId ? 50 : 45)}`)
-      .moveDown(0.5);
+    doc.text(`${`-`.repeat(padEnd)}\nBelongs to: ${owner}\n${`-`.repeat(padEnd)}`).moveDown(0.5);
 
     data.items.forEach((item) => {
       const id = String(item.id).padEnd(5);
@@ -96,18 +104,16 @@ const generatePDF = async (request, h) => {
       if (item.discount > 0) {
         const discount = `-${item.discount.toLocaleString('id-ID')}`;
         doc
-          .text(
-            `Hemat`.padStart(useId ? 10 : 0).padEnd((useId ? 50 : 45) - discount.length) + discount
-          )
+          .text(`Hemat`.padStart(padStart).padEnd(padEnd - discount.length) + discount)
           .moveDown(0.5);
       }
     });
 
     doc.text(
-      `${`-`.repeat(useId ? 50 : 45)}\n${`Total`
-        .padStart(useId ? 10 : 0)
+      `${`-`.repeat(padEnd)}\n${`Total`
+        .padStart(padStart)
         .padEnd(
-          (useId ? 50 : 45) - data.total.toLocaleString('id-ID').length
+          padEnd - data.total.toLocaleString('id-ID').length
         )}${data.total.toLocaleString('id-ID')}`
     );
   }
