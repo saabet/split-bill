@@ -19,12 +19,34 @@ const addItem = async (request, h) => {
     const truncatedName = name.substring(0, 17);
 
     await new Promise((resolve, reject) => {
-      db.run(
-        `INSERT INTO items (name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?)`,
-        [truncatedName, quantity, price, discount, belongsTo || null, billId],
-        function (err) {
-          if (err) reject(err);
-          else resolve();
+      db.get(
+        `SELECT id, quantity, price, discount FROM items WHERE name = ? AND billId = ?`,
+        [name, billId],
+        (err, row) => {
+          if (err) {
+            reject(h.response({ error: 'Database error during lookup' }).code(500));
+          } else if (row) {
+            const newQty = row.quantity + quantity;
+            const newDisc = row.discount + discount;
+
+            db.run(
+              `UPDATE items SET quantity = ?, price = ?, discount = ? WHERE id = ? AND billId = ?`,
+              [newQty, price, newDisc, row.id, billId],
+              (err2) => {
+                if (err2) reject(h.response({ error: 'Failed to update item' }).code(500));
+                resolve();
+              }
+            );
+          } else {
+            db.run(
+              `INSERT INTO items (name, quantity, price, discount, belongsTo, billId) VALUES (?, ?, ?, ?, ?, ?)`,
+              [truncatedName, quantity, price, discount, belongsTo || null, billId],
+              function (err) {
+                if (err) reject(err);
+                resolve();
+              }
+            );
+          }
         }
       );
     });
