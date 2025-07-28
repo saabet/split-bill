@@ -29,7 +29,9 @@ module.exports = [
   },
   {
     method: 'DELETE',
-    path: '/items/bill/{billId}',
+    path: '/bills/{billId}/items',
+    handler: itemController.deleteItems,
+  },
     handler: itemController.deleteBill,
   },
 ];
