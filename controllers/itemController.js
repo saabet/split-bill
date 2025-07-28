@@ -79,10 +79,33 @@ const updateItem = async (request, h) => {
   const { billId } = request.params;
   const { id, name, quantity, price, discount } = request.payload;
 
-  return new Promise((resolve, reject) => {
-    const query = `UPDATE items SET name = ?, quantity = ?, price = ?, discount = ? WHERE id = ? AND billId = ?`;
+  const fields = [];
+  const values = [];
 
-    db.run(query, [name, quantity, price, discount, id, billId], function (err) {
+  if (name) {
+    fields.push('name = ?');
+    values.push(name);
+  }
+  if (quantity) {
+    fields.push('quantity = ?');
+    values.push(quantity);
+  }
+  if (price) {
+    fields.push('price = ?');
+    values.push(price);
+  }
+  if (discount !== undefined) {
+    fields.push('discount = ?');
+    values.push(discount);
+  }
+
+  if (fields.length === 0) return h.response({ error: 'No data sent to be changed.'}).code(400);
+
+  const query = `UPDATE items SET ${fields.join(', ')} WHERE id = ? AND billId = ?`;
+  values.push(id, billId);
+
+  return new Promise((resolve, reject) => {
+    db.run(query, values, function (err) {
       if (err) reject(h.response({ error: 'Failed to update item' }).code(500));
       else if (this.changes === 0) resolve(h.response({ message: 'Item not found' }).code(404));
       else resolve(h.response({ message: 'Item updated successfully' }).code(200));
