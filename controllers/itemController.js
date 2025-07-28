@@ -99,7 +99,7 @@ const updateItem = async (request, h) => {
     values.push(discount);
   }
 
-  if (fields.length === 0) return h.response({ error: 'No data sent to be changed.'}).code(400);
+  if (fields.length === 0) return h.response({ error: 'No data sent to be changed.' }).code(400);
 
   const query = `UPDATE items SET ${fields.join(', ')} WHERE id = ? AND billId = ?`;
   values.push(id, billId);
