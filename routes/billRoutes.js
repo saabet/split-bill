@@ -21,4 +21,9 @@ module.exports = [
     path: '/bills/{id}/items',
     handler: billController.getItemsByBill,
   },
+  {
+    method: 'PUT',
+    path: '/bills/{billId}',
+    handler: billController.updateBillInfo,
+  },
 ];

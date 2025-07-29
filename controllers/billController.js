@@ -117,4 +117,34 @@ const getItemsByBill = async (request, h) => {
   });
 };
 
-module.exports = { startBill, splitBill, finishBill, getItemsByBill };
+const updateBillInfo = async (request, h) => {
+  const { billId } = request.params;
+  const { storeName, purchaseDate } = request.payload;
+
+  const fields = [];
+  const values = [];
+
+  if (storeName) {
+    fields.push('storeName = ?');
+    values.push(storeName);
+  }
+  if (purchaseDate) {
+    fields.push('purchaseDate = ?');
+    values.push(purchaseDate);
+  }
+
+  if (fields.length === 0) return h.response({ error: 'No data sent to be changed.' }).code(400);
+
+  const query = `UPDATE bills SET ${fields.join(', ')} WHERE billId = ?`;
+  values.push(billId);
+
+  return new Promise((resolve, reject) => {
+    db.run(query, values, (err) => {
+      if (err) return reject(h.response({ error: 'Failed to update bill' }).code(500));
+      else if (this.changes === 0) return reject(h.response({ error: 'Bill not found' }).code(404));
+      else resolve(h.response({ message: `Bill ${billId} updated successfully` }).code(200));
+    });
+  });
+};
+
+module.exports = { startBill, splitBill, finishBill, getItemsByBill, updateBillInfo };
