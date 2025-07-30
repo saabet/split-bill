@@ -93,7 +93,7 @@ const splitBill = async (request, h) => {
 };
 
 const finishBill = async (request, h) => {
-  const { billId } = request.payload;
+  const { billId } = request.params;
 
   return new Promise((resolve, reject) => {
     db.run(`UPDATE bills SET status = 'done' WHERE id = ?`, [billId], function (err) {

@@ -13,7 +13,7 @@ module.exports = [
   },
   {
     method: 'POST',
-    path: '/bills/finish',
+    path: '/bills/{billId}/finish',
     handler: billController.finishBill,
   },
   {
