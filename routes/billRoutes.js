@@ -18,7 +18,7 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/bills/{id}/items',
+    path: '/bills/{billId}/items',
     handler: billController.getItemsByBill,
   },
   {

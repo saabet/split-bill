@@ -107,7 +107,7 @@ const finishBill = async (request, h) => {
 };
 
 const getItemsByBill = async (request, h) => {
-  const billId = request.params.id;
+  const { billId } = request.params;
 
   return new Promise((resolve) => {
     db.all(`SELECT * FROM items WHERE billId = ?`, [billId], (err, rows) => {
