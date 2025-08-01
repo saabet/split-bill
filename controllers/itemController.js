@@ -66,6 +66,17 @@ const getItems = async (_request, h) => {
   });
 };
 
+const getItemsByBill = async (request, h) => {
+  const { billId } = request.params;
+
+  return new Promise((resolve) => {
+    db.all(`SELECT * FROM items WHERE billId = ?`, [billId], (err, rows) => {
+      if (err) resolve(h.response({ error: 'Failed to get items' }).code(500));
+      else resolve(h.response({ items: rows }).code(200));
+    });
+  });
+};
+
 const getBills = async (_request, h) => {
   return new Promise((resolve) => {
     db.all(`SELECT * FROM bills`, (err, rows) => {
@@ -141,4 +152,12 @@ const deleteBill = async (request, h) => {
   });
 };
 
-module.exports = { addItem, getItems, getBills, updateItem, deleteBill, deleteItems };
+module.exports = {
+  addItem,
+  getItems,
+  getItemsByBill,
+  getBills,
+  updateItem,
+  deleteBill,
+  deleteItems,
+};

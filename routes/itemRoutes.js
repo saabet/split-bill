@@ -14,6 +14,11 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: '/bills/{billId}/items',
+    handler: itemController.getItemsByBill,
+  },
+  {
+    method: 'GET',
     path: '/bills',
     handler: itemController.getBills,
   },

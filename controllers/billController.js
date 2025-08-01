@@ -106,17 +106,6 @@ const finishBill = async (request, h) => {
   });
 };
 
-const getItemsByBill = async (request, h) => {
-  const { billId } = request.params;
-
-  return new Promise((resolve) => {
-    db.all(`SELECT * FROM items WHERE billId = ?`, [billId], (err, rows) => {
-      if (err) resolve(h.response({ error: 'Failed to get items' }).code(500));
-      else resolve(h.response({ items: rows }).code(200));
-    });
-  });
-};
-
 const updateBillInfo = async (request, h) => {
   const { billId } = request.params;
   const { storeName, purchaseDate } = request.payload;
@@ -147,4 +136,4 @@ const updateBillInfo = async (request, h) => {
   });
 };
 
-module.exports = { startBill, splitBill, finishBill, getItemsByBill, updateBillInfo };
+module.exports = { startBill, splitBill, finishBill, updateBillInfo };

@@ -17,11 +17,6 @@ module.exports = [
     handler: billController.finishBill,
   },
   {
-    method: 'GET',
-    path: '/bills/{billId}/items',
-    handler: billController.getItemsByBill,
-  },
-  {
     method: 'PUT',
     path: '/bills/{billId}',
     handler: billController.updateBillInfo,
