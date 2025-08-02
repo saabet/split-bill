@@ -106,6 +106,15 @@ const finishBill = async (request, h) => {
   });
 };
 
+const getBills = async (_request, h) => {
+  return new Promise((resolve) => {
+    db.all(`SELECT * FROM bills`, (err, rows) => {
+      if (err) resolve(h.response({ message: 'Failed to retrieve bills' }).code(500));
+      else resolve(h.response(rows).code(200));
+    });
+  });
+};
+
 const updateBillInfo = async (request, h) => {
   const { billId } = request.params;
   const { storeName, purchaseDate } = request.payload;
@@ -136,4 +145,4 @@ const updateBillInfo = async (request, h) => {
   });
 };
 
-module.exports = { startBill, splitBill, finishBill, updateBillInfo };
+module.exports = { startBill, splitBill, finishBill, getBills, updateBillInfo };

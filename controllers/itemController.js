@@ -77,15 +77,6 @@ const getItemsByBill = async (request, h) => {
   });
 };
 
-const getBills = async (_request, h) => {
-  return new Promise((resolve) => {
-    db.all(`SELECT * FROM bills`, (err, rows) => {
-      if (err) resolve(h.response({ message: 'Failed to retrieve bills' }).code(500));
-      else resolve(h.response(rows).code(200));
-    });
-  });
-};
-
 const updateItem = async (request, h) => {
   const { billId } = request.params;
   const { id, name, quantity, price, discount } = request.payload;
@@ -156,7 +147,6 @@ module.exports = {
   addItem,
   getItems,
   getItemsByBill,
-  getBills,
   updateItem,
   deleteBill,
   deleteItems,

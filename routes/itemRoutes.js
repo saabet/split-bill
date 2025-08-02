@@ -19,11 +19,6 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: '/bills',
-    handler: itemController.getBills,
-  },
-  {
-    method: 'GET',
     path: '/bills/{billId}/export',
     handler: generatePDF,
   },
