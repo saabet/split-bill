@@ -90,11 +90,12 @@ const generatePDF = async (request, h) => {
         align: 'center',
       })
       .moveDown(1);
-    doc
-      .text(`${billInfo.storeName}`.padEnd(padEnd - date.length) + date)
-      .moveDown(0.5);
+    doc.text(`${billInfo.storeName}`.padEnd(padEnd - date.length) + date).moveDown(0.5);
     doc.text(time.padStart(padEnd)).moveDown(1);
-    doc.text(`${`-`.repeat(padEnd)}\nBelongs to: ${owner}\n${`-`.repeat(padEnd)}`).moveDown(0.5);
+    doc.text(`${`-`.repeat(padEnd)}`).moveDown(0.5);
+    if (owner) {
+      doc.text(`Belongs to: ${owner}\n${`-`.repeat(padEnd)}`).moveDown(0.5);
+    }
 
     let totalQty = 0;
     let totalDisc = 0;
