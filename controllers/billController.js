@@ -92,6 +92,18 @@ const splitBill = async (request, h) => {
   return h.response({ message: 'Split bill successful' }).code(200);
 };
 
+const undoSplit = async (request, _h) => {
+  const { billId } = request.params;
+
+  return new Promise((resolve, reject) => {
+    db.run(`UPDATE items SET belongsTo = ? WHERE billId = ?`, [null, billId], function (err) {
+      if (err || this.changes === 0)
+        reject(h.response({ error: 'Bill not found or update failed' }).code(404));
+      else resolve(h.response({ message: 'Undo split success' }).code(200));
+    });
+  });
+};
+
 const finishBill = async (request, h) => {
   const { billId } = request.params;
 
@@ -145,4 +157,4 @@ const updateBillInfo = async (request, h) => {
   });
 };
 
-module.exports = { startBill, splitBill, finishBill, getBills, updateBillInfo };
+module.exports = { startBill, splitBill, undoSplit, finishBill, getBills, updateBillInfo };

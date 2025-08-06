@@ -12,6 +12,11 @@ module.exports = [
     handler: billController.splitBill,
   },
   {
+    method: 'PUT',
+    path: '/bills/{billId}/undo-split',
+    handler: billController.undoSplit,
+  },
+  {
     method: 'POST',
     path: '/bills/{billId}/finish',
     handler: billController.finishBill,
