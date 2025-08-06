@@ -46,17 +46,14 @@ const generatePDF = async (request, h) => {
   const baseHeight = 100;
   const rowHeight = 17;
 
-  let paperWidth = 57 * 3.7795275591;
-  let titleWidth = paperWidth - 2 * 14.17;
+  const paperWidth = 57 * 3.7795275591;
+  const titleWidth = paperWidth - 2 * 14.17;
   let padStart = 0;
-  let padEnd = 31;
+  const padEnd = 31;
 
   const useId = false;
   if (useId) {
-    paperWidth = 330;
-    titleWidth = 300;
-    padStart = 10;
-    padEnd = 35;
+    padStart = 5;
   }
 
   for (const [owner, data] of Object.entries(grouped)) {
@@ -100,8 +97,8 @@ const generatePDF = async (request, h) => {
     let totalQty = 0;
     let totalDisc = 0;
     data.items.forEach((item) => {
-      // const id = String(item.id).padEnd(5);
-      const name = item.name.padEnd(23);
+      const id = String(item.id).padEnd(padStart);
+      const name = item.name.padEnd(padEnd - padStart - 8);
       const totalPrice = (item.quantity * item.price - item.discount)
         .toLocaleString('id-ID')
         .padStart(8);
@@ -110,7 +107,7 @@ const generatePDF = async (request, h) => {
       totalQty += item.quantity;
       totalDisc += item.discount;
 
-      doc.text(`${name}${totalPrice}`).moveDown(0.5);
+      doc.text(`${useId ? id : ''}${name}${totalPrice}`).moveDown(0.5);
       if (item.quantity != 0 && item.quantity != 1) {
         doc.text(`${quantity} @ ${unitPrice}`).moveDown(0.5);
       }
