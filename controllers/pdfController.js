@@ -58,21 +58,24 @@ const generatePDF = async (request, h) => {
 
   for (const [owner, data] of Object.entries(grouped)) {
     const discountLines = data.items.filter((i) => i.discount > 0).length;
-    const qtyLines = data.items.filter((i) => (i.quantity != 0 && i.quantity != 1) || (i.discount > 0 && i.quantity == 1)).length;
+    const qtyLines = data.items.filter(
+      (i) => (i.quantity != 0 && i.quantity != 1) || (i.discount > 0 && i.quantity == 1)
+    ).length;
     const totalLines = data.items.length + discountLines + qtyLines + 6;
-    console.log(totalLines-4);
     const height = baseHeight + totalLines * rowHeight;
-    const formatedDate = new Date(billInfo.purchaseDate).toLocaleDateString('id-ID', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }).replace('.', ':');
+    const formatedDate = new Date(billInfo.purchaseDate)
+      .toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+      .replace('.', ':');
 
     const date = formatedDate.slice(0, 10);
-    const time = formatedDate.slice(-5)
+    const time = formatedDate.slice(-5);
 
     doc.addPage({
       size: [paperWidth, height],
@@ -119,10 +122,10 @@ const generatePDF = async (request, h) => {
       }
     });
 
-    //totalQty = String(totalQty);
     doc.text(
-      `${`-`.repeat(padEnd)}\n${String(totalQty).padStart(5) + ` ITEMS`}${`TOTAL:`
-        .padStart(10)}${data.total.toLocaleString('id-ID').padStart(10)}\n\n Anda Hemat\n${totalDisc.toLocaleString('id-ID').padStart(11)}`
+      `${`-`.repeat(padEnd)}\n${String(totalQty).padStart(5) + ` ITEMS`}${`TOTAL:`.padStart(
+        10
+      )}${data.total.toLocaleString('id-ID').padStart(10)}\n\n Anda Hemat\n${totalDisc.toLocaleString('id-ID').padStart(11)}`
     );
   }
 
