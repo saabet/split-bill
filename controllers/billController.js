@@ -99,7 +99,33 @@ const undoSplit = async (request, _h) => {
     db.run(`UPDATE items SET belongsTo = ? WHERE billId = ?`, [null, billId], function (err) {
       if (err || this.changes === 0)
         reject(h.response({ error: 'Bill not found or update failed' }).code(404));
-      else resolve(h.response({ message: 'Undo split success' }).code(200));
+      
+      db.all(
+        `SELECT name, MIN(id) AS min_id, SUM(quantity) AS total_qty FROM items WHERE billId = ? GROUP BY name HAVING COUNT(*) > 1`,
+        [billId],
+        (err, rows) => {
+          if (err) reject(err);
+          
+      rows.forEach((row) => {
+            const { name, min_id, total_qty } = row;
+            db.run(
+              `UPDATE items SET quantity = ? WHERE id = ?`,
+              [total_qty, min_id],
+              function (err) {
+                if (err) reject(err);
+                db.run(
+                  `DELETE FROM items WHERE name = ? AND billId = ? AND id != ?`,
+                  [name, billId, min_id],
+                  function (err) {
+                    if (err) reject(err);
+                    resolve(h.response({ message: 'Undo split success' }).code(200));
+                  }
+                );
+              }
+            );
+          });
+        }
+      );
     });
   });
 };
