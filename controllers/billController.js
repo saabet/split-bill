@@ -99,7 +99,6 @@ const undoSplit = async (request, _h) => {
     db.run(`UPDATE items SET belongsTo = ? WHERE billId = ?`, [null, billId], function (err) {
       if (err || this.changes === 0)
         reject(h.response({ error: 'Bill not found or update failed' }).code(404));
-      
       db.all(
         `SELECT name, MIN(id) AS min_id, SUM(quantity) AS total_qty FROM items WHERE billId = ? GROUP BY name HAVING COUNT(*) > 1`,
         [billId],
