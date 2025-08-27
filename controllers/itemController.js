@@ -34,7 +34,7 @@ const addItem = async (request, h) => {
               [newQty, price, newDisc, row.id, billId],
               (err2) => {
                 if (err2) reject(h.response({ error: 'Failed to update item' }).code(500));
-                resolve();
+                else resolve();
               }
             );
           } else {
@@ -43,7 +43,7 @@ const addItem = async (request, h) => {
               [truncatedName, quantity, price, discount, belongsTo || null, billId],
               function (err) {
                 if (err) reject(err);
-                resolve();
+                else resolve();
               }
             );
           }
