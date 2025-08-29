@@ -122,7 +122,7 @@ const deleteItems = async (request, h) => {
   return new Promise((resolve, reject) => {
     db.run(`DELETE FROM items WHERE id = ? AND billId = ?`, [id, billId], (err) => {
       if (err) return reject(err);
-      resolve(h.response({ message: `item ${id} deleted successfully` }).code(200));
+      else resolve(h.response({ message: `item ${id} deleted successfully` }).code(200));
     });
   });
 };
