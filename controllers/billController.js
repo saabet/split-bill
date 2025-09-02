@@ -104,8 +104,8 @@ const undoSplit = async (request, _h) => {
         [billId],
         (err, rows) => {
           if (err) reject(err);
-          
-      rows.forEach((row) => {
+
+          rows.forEach((row) => {
             const { name, min_id, total_qty } = row;
             db.run(
               `UPDATE items SET quantity = ? WHERE id = ?`,
@@ -117,7 +117,7 @@ const undoSplit = async (request, _h) => {
                   [name, billId, min_id],
                   function (err) {
                     if (err) reject(err);
-                    resolve(h.response({ message: 'Undo split success' }).code(200));
+                    else resolve(h.response({ message: 'Undo split success' }).code(200));
                   }
                 );
               }
