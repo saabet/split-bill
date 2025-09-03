@@ -31,7 +31,7 @@ const splitBill = async (request, h) => {
       const originalItem = await new Promise((resolve, reject) => {
         db.get(`SELECT * FROM items WHERE id = ? AND billId = ?`, [id, billId], (err, row) => {
           if (err) return reject(err);
-          resolve(row);
+          else resolve(row);
         });
       });
 
@@ -46,7 +46,7 @@ const splitBill = async (request, h) => {
             [name, id, billId],
             (err) => {
               if (err) return reject(err);
-              resolve();
+              else resolve();
             }
           );
         });
@@ -81,7 +81,7 @@ const splitBill = async (request, h) => {
             [originalItem.name, quantity, originalItem.price, subtotalDiscount, name, billId],
             (err) => {
               if (err) return reject(err);
-              resolve();
+              else resolve();
             }
           );
         });
