@@ -70,7 +70,7 @@ const splitBill = async (request, h) => {
             [remaining, remainingDiscount, id, billId],
             (err) => {
               if (err) return reject(err);
-              resolve();
+              else resolve();
             }
           );
         });
