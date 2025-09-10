@@ -136,9 +136,9 @@ const deleteBill = async (request, h) => {
       db.run(`DELETE FROM bills WHERE id = ?`, [billId], (err) => {
         if (err) return reject(err);
         else
-        resolve(
-          h.response({ message: `bill ${billId} and related item deleted successfully` }).code(200)
-        );
+          resolve(
+            h.response({ message: `bill ${billId} and related item deleted successfully` }).code(200)
+          );
       });
     });
   });
